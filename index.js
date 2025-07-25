@@ -9,10 +9,10 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173','https://bank-lending-system-gamma.vercel.app/'],
     credentials: true
   }));
-  
+
 const dbPath = path.join(__dirname, 'bank.db');
 let db = null;
 const initializeDBAndServer = async () => {
