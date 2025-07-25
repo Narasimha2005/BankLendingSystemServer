@@ -1,0 +1,46 @@
+PRAGMA foreign_keys = ON;
+
+
+CREATE TABLE Customers (
+    customer_id TEXT NOT NULL PRIMARY KEY,
+    name TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE Loans (
+    loan_id TEXT PRIMARY KEY,                         -- UUID stored as TEXT
+    customer_id TEXT NOT NULL,                        -- FK to Customers
+    principal_amount DECIMAL(12, 2) NOT NULL,         -- Principal
+    total_amount DECIMAL(12, 2) NOT NULL,             -- With interest
+    interest_rate DECIMAL(5, 2) NOT NULL,             -- Percentage
+    loan_period_months INTEGER NOT NULL,               -- Duration in years
+    monthly_emi DECIMAL(12, 2) NOT NULL,              -- EMI
+    status TEXT NOT NULL CHECK (status IN ('ACTIVE', 'PAID_OFF')),  -- Controlled values
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- Auto timestamp
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
+
+CREATE TABLE Loans (
+    loan_id TEXT PRIMARY KEY,                         
+    customer_id TEXT NOT NULL,                        
+    principal_amount DECIMAL(12, 2) NOT NULL,         
+    total_amount DECIMAL(12, 2) NOT NULL,             
+    interest_rate DECIMAL(5, 2) NOT NULL,             
+    loan_period_months INTEGER NOT NULL,              
+    monthly_emi DECIMAL(12, 2) NOT NULL,              
+    status TEXT NOT NULL CHECK (status IN ('ACTIVE', 'PAID_OFF')),  
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
+
+CREATE TABLE Payments (
+    payment_id TEXT PRIMARY KEY,                              -- UUID as TEXT
+    loan_id TEXT NOT NULL,                                    -- FK to Loans
+    amount DECIMAL(12, 2) NOT NULL,                           -- Payment amount
+    payment_type TEXT NOT NULL CHECK (
+        payment_type IN ('EMI', 'LUMP_SUM')                   -- Controlled types
+    ),
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- Auto timestamp
+    FOREIGN KEY (loan_id) REFERENCES Loans(loan_id)
+);
